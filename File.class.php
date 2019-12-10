@@ -202,6 +202,58 @@ class File{
          file_put_contents($file,$content);
      }
   }
+  
+  <?php
+namespace Admin\Controller;
+use Think\Controller;
+use Myself\File;
+class BuildController extends BaseController {
+
+
+	 protected $m = NULL;
+	 protected $m_config = NULL;
+	 protected $m_send = NULL;
+	 
+	 public function _initialize(){
+	 		parent::_initialize();
+			$this->m = M('admin_language');	
+			$this->m_config = M('admin_config');	
+			$this->m_send = M('admin_emailcontent');	
+	 }
+	
+  
+	
+	public function clearCache(){
+		if($this->_clearRuntime('Cache')){
+			$this->success('清理成功！',U('Index/addMain'));
+		}else{
+			$this->error('没有可清除的缓存！',U('Index/addMain'));
+		}
+	}
+	
+	public function clearLogs(){
+		if($this->_clearRuntime('Logs')){
+			$this->success('清理成功！',U('Index/addMain'));
+		}else{
+			$this->error('没有可清除的日志！',U('Index/addMain'));
+		}
+	}
+	
+	public function _clearRuntime($CPath='Cache'){
+		$fileArr=File::GetFile(__PHYSICS__.'/Runtime/'.$CPath);
+		//var_dump($fileArr);
+		$this->checkUser();
+		if($fileArr){
+			foreach($fileArr as $item){
+				File::deleteDir(__PHYSICS__.'/Runtime/'.$CPath.'/'.$item);
+			}
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+}
 
 
 ?>
